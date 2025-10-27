@@ -65,14 +65,19 @@ def register():
 
 
 # Dashboard
-
-
+@app.route("/dashboard")
+def dashboard():
+    if "username" in session:
+        return render_template('dashboard.html', username=session['username'])
+    return redirect(url_for('home'))
 
 
 
 #Logout
-
-
+@app.route("/logout")
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('home'))
 
 
 
