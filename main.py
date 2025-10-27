@@ -16,7 +16,7 @@ class User(db.Model):
     # class variable
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+    password_hash = db.Column(db.String(150), nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -48,9 +48,20 @@ def login():
 
 
 # Register
-
-
-
+@app.route("/register", methods=["POST"])
+def register():
+    username = request.form['username']
+    password = request.form['password']
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return render_template("index.html", error="User already exist!")
+    else:
+        new_user = User(username=username)
+        new_user.set_password(password)
+        db.session.add(new_user)
+        db.session.commit()
+        session['username'] = username
+        return redirect(url_for('dashboard'))
 
 
 # Dashboard
